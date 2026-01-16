@@ -1,0 +1,5 @@
+{
+  "name": "Troca de Cor da Roupa",
+  "description": "Professional AI-powered image recoloring tool. Upload an image, select an object, and change its color while maintaining realistic lighting and textures using Gemini models.",
+  "requestFramePermissions": []
+}

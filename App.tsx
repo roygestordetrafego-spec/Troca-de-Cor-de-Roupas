@@ -1,9 +1,9 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ColorPicker } from './components/ColorPicker.tsx';
-import { ImageWorkspace } from './components/ImageWorkspace.tsx';
-import { ToolMode, ProcessingState } from './types.ts';
-import { editImageWithGemini, generateVideoWithGemini } from './services/geminiService.ts';
+import { ColorPicker } from './components/ColorPicker';
+import { ImageWorkspace } from './components/ImageWorkspace';
+import { ToolMode, ProcessingState } from './types';
+import { editImageWithGemini, generateVideoWithGemini } from './services/geminiService';
 
 const TARGET_PRESETS = [
   { label: 'VESTIDO', value: 'Dress' },

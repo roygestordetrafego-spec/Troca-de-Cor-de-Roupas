@@ -4,6 +4,7 @@ import { ColorPicker } from './components/ColorPicker';
 import { ImageWorkspace } from './components/ImageWorkspace';
 import { ToolMode, ProcessingState } from './types';
 import { editImageWithGemini, generateVideoWithGemini } from './services/geminiService';
+import { PrintLayout } from './components/PrintLayout';
 
 const TARGET_PRESETS = [
   { label: 'VESTIDO', value: 'Dress' },
@@ -21,6 +22,7 @@ const App: React.FC = () => {
   const [originalImage, setOriginalImage] = useState<string | null>(null);
   const [history, setHistory] = useState<string[]>([]);
   const [historyIndex, setHistoryIndex] = useState<number>(-1);
+  const [showPrintLayout, setShowPrintLayout] = useState(false);
   
   const [processingState, setProcessingState] = useState<ProcessingState>({
     isLoading: false,
@@ -32,7 +34,6 @@ const App: React.FC = () => {
   const [targetObject, setTargetObject] = useState<string>('Dress');
   const [targetColor, setTargetColor] = useState<string>('#000000'); 
   
-  // Persistence for user colors
   const [savedColors, setSavedColors] = useState<string[]>(() => {
     const stored = localStorage.getItem('donnacarmos_saved_colors');
     return stored ? JSON.parse(stored) : [];
@@ -44,7 +45,6 @@ const App: React.FC = () => {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Sync saved colors to localStorage
   useEffect(() => {
     localStorage.setItem('donnacarmos_saved_colors', JSON.stringify(savedColors));
   }, [savedColors]);
@@ -150,6 +150,16 @@ const App: React.FC = () => {
   return (
     <div className="flex flex-col h-screen bg-black text-white overflow-hidden font-sans">
       
+      {showPrintLayout && (
+        <PrintLayout 
+          originalImage={originalImage}
+          currentImage={currentImage || null}
+          targetObject={targetObject}
+          targetColor={targetColor}
+          onClose={() => setShowPrintLayout(false)}
+        />
+      )}
+
       {/* Header */}
       <header className="h-16 border-b border-[#111] bg-black flex items-center justify-between px-6 shrink-0 z-30">
         <div className="flex items-center gap-3">
@@ -181,6 +191,14 @@ const App: React.FC = () => {
            
            <div className="flex items-center gap-2">
              <button 
+               onClick={() => setShowPrintLayout(true)}
+               disabled={!currentImage}
+               className="bg-[#111] hover:bg-[#1a1a1a] text-gray-400 px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.1em] flex items-center gap-2 transition-all border border-white/5 disabled:opacity-20"
+             >
+               TECH PACK
+             </button>
+
+             <button 
                onClick={() => fileInputRef.current?.click()}
                className="bg-[#111] hover:bg-[#1a1a1a] text-gray-300 px-4 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-[0.1em] flex items-center gap-2.5 transition-all border border-white/5"
              >
@@ -202,11 +220,8 @@ const App: React.FC = () => {
 
       <main className="flex-1 flex flex-row overflow-hidden">
         
-        {/* Sidebar Controls */}
         <aside className="w-[380px] bg-[#050505] border-r border-[#1a1a1a] flex flex-col shrink-0 overflow-y-auto custom-scrollbar">
           <div className="p-6 space-y-8">
-            
-            {/* IMAGEM DE ENTRADA */}
             <div className="space-y-3">
               <h2 className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">IMAGEM DE ENTRADA</h2>
               <button 
@@ -226,7 +241,6 @@ const App: React.FC = () => {
               <input type="file" ref={fileInputRef} onChange={handleFileUpload} accept="image/*" className="hidden" />
             </div>
 
-            {/* FERRAMENTAS */}
             <div className="space-y-3">
               <h2 className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">FERRAMENTAS</h2>
               <div className="grid grid-cols-2 gap-1.5 bg-[#0a0a0a] rounded-2xl border border-[#1a1a1a] p-1.5">
@@ -249,7 +263,6 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* ÁREA ALVO */}
             <div className="space-y-3">
               <h2 className="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em]">ÁREA ALVO</h2>
               <div className="grid grid-cols-3 gap-2">
@@ -269,7 +282,6 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* SELETOR DE CORES */}
             <ColorPicker 
               selectedColor={targetColor} 
               savedColors={savedColors}
@@ -278,7 +290,6 @@ const App: React.FC = () => {
               onDeleteColor={handleDeleteColor}
             />
 
-            {/* BOTÃO PRINCIPAL */}
             <button 
               onClick={handleApply}
               disabled={!originalImage && toolMode !== ToolMode.VIDEO}
@@ -294,7 +305,6 @@ const App: React.FC = () => {
           </div>
         </aside>
 
-        {/* Workspace */}
         <section className="flex-1 relative bg-black flex flex-col items-center justify-center p-10 overflow-hidden">
            {generatedVideoUrl ? (
              <div className="w-full h-full max-w-5xl flex items-center justify-center">
@@ -316,7 +326,6 @@ const App: React.FC = () => {
         </section>
       </main>
 
-      {/* Error View */}
       {processingState.error && (
         <div className="fixed bottom-10 right-10 z-50 animate-fade-in max-w-sm">
            <div className="bg-[#1a0505] border border-red-500/40 p-5 rounded-2xl shadow-2xl flex items-start gap-4 backdrop-blur-md">

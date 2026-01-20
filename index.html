@@ -1,10 +1,11 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="https://picsum.photos/32/32" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ChromaShift AI - Smart Recolor</title>
+    <title>Donna Carmo Studio - AI Fashion Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
       tailwind.config = {
@@ -39,7 +40,6 @@
         background-color: #0a0a0a;
         color: white;
       }
-      /* Custom scrollbar */
       ::-webkit-scrollbar {
         width: 8px;
         height: 8px;
@@ -54,36 +54,11 @@
       ::-webkit-scrollbar-thumb:hover {
         background: #6b7280; 
       }
-      .checkerboard {
-        background-color: #fff;
-        background-image: linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc),
-        linear-gradient(45deg, #ccc 25%, transparent 25%, transparent 75%, #ccc 75%, #ccc);
-        background-size: 20px 20px;
-        background-position: 0 0, 10px 10px;
-      }
-
       @media print {
-        @page {
-          margin: 0;
-          size: auto;
-        }
-        body {
-          background-color: white !important;
-          color: black !important;
-        }
-        /* Hide everything by default in print */
-        body > * {
-          display: none !important;
-        }
-        /* Except the root which contains our app */
-        #root {
-          display: block !important;
-        }
-        /* Inside app, hide everything except the print container */
-        .no-print {
-          display: none !important;
-        }
-        /* Ensure the print overlay is visible and takes up the page */
+        @page { margin: 0; size: auto; }
+        body > * { display: none !important; }
+        #root { display: block !important; }
+        .no-print { display: none !important; }
         #print-container {
           display: block !important;
           position: fixed !important;
@@ -93,20 +68,6 @@
           height: 100% !important;
           z-index: 9999 !important;
           margin: 0 !important;
-          box-shadow: none !important;
-          overflow: visible !important;
-        }
-        /* Fix the overlay parent container to not block printing */
-        div[class*="fixed inset-0"] {
-            position: static !important;
-            display: block !important;
-            background: white !important;
-            height: auto !important;
-            overflow: visible !important;
-        }
-        /* Hide scrollbars on print */
-        ::-webkit-scrollbar {
-          display: none;
         }
       }
     </style>
@@ -124,6 +85,7 @@
 </head>
   <body>
     <div id="root"></div>
-  <script type="module" src="/index.tsx"></script>
-</body>
+    <!-- Ponto de entrada explícito para o Vite -->
+    <script type="module" src="/index.tsx"></script>
+  </body>
 </html>

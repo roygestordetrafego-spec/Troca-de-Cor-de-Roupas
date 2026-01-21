@@ -1,10 +1,10 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ColorPicker } from './components/ColorPicker';
-import { ImageWorkspace } from './components/ImageWorkspace';
-import { ToolMode, ProcessingState } from './types';
-import { editImageWithGemini, generateVideoWithGemini } from './services/geminiService';
-import { PrintLayout } from './components/PrintLayout';
+import { ColorPicker } from './components/ColorPicker.tsx';
+import { ImageWorkspace } from './components/ImageWorkspace.tsx';
+import { ToolMode, ProcessingState } from './types.ts';
+import { editImageWithGemini, generateVideoWithGemini } from './services/geminiService.ts';
+import { PrintLayout } from './components/PrintLayout.tsx';
 
 const TARGET_PRESETS = [
   { label: 'VESTIDO', value: 'Dress' },
@@ -46,7 +46,7 @@ const App: React.FC = () => {
   
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Check for API Key on mount
+  // Check for API Key on mount and listen for selection
   useEffect(() => {
     const checkKey = async () => {
       if (window.aistudio) {
@@ -64,7 +64,7 @@ const App: React.FC = () => {
   const handleConnectKey = async () => {
     if (window.aistudio) {
       await window.aistudio.openSelectKey();
-      setIsKeySelected(true);
+      setIsKeySelected(true); // Proceed assuming selection works to avoid race condition
     }
   };
 
@@ -123,15 +123,16 @@ const App: React.FC = () => {
     const msg = error?.message || error || "";
     if (msg.includes("Requested entity was not found")) {
       setIsKeySelected(false);
-      return "Sua chave de API expirou ou é inválida. Por favor, reconecte.";
+      return "Sua chave de API expirou ou o projeto não foi encontrado. Por favor, reconecte sua chave.";
     }
     if (msg.includes("Internal error")) {
-      return "Erro interno da AI. Tente uma cor diferente ou reduza a complexidade do prompt.";
+      return "Erro interno da AI. Isso pode acontecer com prompts complexos. Tente novamente ou use uma cor diferente.";
     }
     return msg || "Ocorreu um erro inesperado.";
   };
 
   const handleApply = async () => {
+    // Ensure API Key is selected before making Pro model calls
     if (!isKeySelected) {
       await handleConnectKey();
       return;
@@ -158,7 +159,7 @@ const App: React.FC = () => {
       if (!sourceImage) throw new Error("Sem imagem de origem");
       const prompt = toolMode === ToolMode.REMOVE_BG ? "Remove background" : 
                     toolMode === ToolMode.CUSTOM ? customPrompt :
-                    `Recolor ${targetObject} to hex ${targetColor}. Maintain realistic textures and light. High fashion photography style. Professional lighting.`;
+                    `Recolor ${targetObject} to hex ${targetColor}. Maintain realistic textures and light. High fashion photography style. Professional lighting. High fidelity.`;
       
       const newImageBase64 = await editImageWithGemini(sourceImage, prompt);
       addToHistory(newImageBase64);
@@ -172,7 +173,7 @@ const App: React.FC = () => {
   return (
     <div className="flex flex-col h-screen bg-black text-white overflow-hidden font-sans">
       
-      {/* API Key Connection Overlay */}
+      {/* API Key Connection Overlay - Mandatory for Pro Models */}
       {!isKeySelected && (
         <div className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex items-center justify-center p-6">
           <div className="max-w-md w-full bg-[#0a0a0a] border border-white/10 rounded-[32px] p-10 text-center shadow-2xl">
@@ -181,14 +182,14 @@ const App: React.FC = () => {
             </div>
             <h2 className="text-xl font-bold uppercase tracking-[0.2em] mb-4">CONECTAR AI ENGINE</h2>
             <p className="text-xs text-gray-500 leading-relaxed mb-8 uppercase tracking-widest font-medium">
-              Para processamento de alta fidelidade (4K), é necessário conectar uma chave de API do Google AI Studio com faturamento ativo.
+              O processamento Pro 4K requer uma chave de API do Google AI Studio com faturamento ativado (Paid Project).
             </p>
             <div className="space-y-4">
               <button 
                 onClick={handleConnectKey}
                 className="w-full bg-[#0ea5e9] hover:bg-[#0284c7] text-white py-4 rounded-2xl font-black uppercase text-[10px] tracking-[0.2em] transition-all shadow-[0_8px_30px_rgba(14,165,233,0.3)]"
               >
-                CONECTAR AGORA
+                CONECTAR CHAVE
               </button>
               <a 
                 href="https://ai.google.dev/gemini-api/docs/billing" 
@@ -196,7 +197,7 @@ const App: React.FC = () => {
                 rel="noopener noreferrer"
                 className="block text-[9px] text-gray-600 hover:text-white uppercase tracking-widest font-bold transition-colors"
               >
-                SAIBA MAIS SOBRE FATURAMENTO
+                VER DOCUMENTAÇÃO DE FATURAMENTO
               </a>
             </div>
           </div>

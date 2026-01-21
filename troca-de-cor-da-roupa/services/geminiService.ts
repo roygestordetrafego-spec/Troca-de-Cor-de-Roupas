@@ -52,10 +52,10 @@ export const editImageWithGemini = async (
 ): Promise<string> => {
   
   const currentApiKey = process.env.API_KEY;
-  if (!currentApiKey) throw new Error("API Key is missing. Please connect your Google AI Studio project.");
+  if (!currentApiKey) throw new Error("Requested entity was not found. Please connect your Google AI Studio project.");
 
   return withRetry(async () => {
-    // CRITICAL: Always create a new instance right before the call to use the latest key
+    // CRITICAL: Always create a new instance right before the call to use the latest key from the dialog
     const ai = new GoogleGenAI({ apiKey: currentApiKey });
     const model = "gemini-3-pro-image-preview"; 
     const mimeType = getMimeType(imageBase64);
@@ -78,7 +78,7 @@ export const editImageWithGemini = async (
       },
       config: {
         imageConfig: {
-          imageSize: "2K", // Start with 2K for stability, can be 4K but prone to internal errors
+          imageSize: "2K", // Use 2K for stability; switch to 4K if user explicitly upgrades and quota allows
           aspectRatio: "3:4" 
         }
       }
@@ -116,7 +116,7 @@ export const generateVideoWithGemini = async (
   imageBase64?: string
 ): Promise<string> => {
   const currentApiKey = process.env.API_KEY;
-  if (!currentApiKey) throw new Error("API Key is missing. Please connect your Google AI Studio project.");
+  if (!currentApiKey) throw new Error("Requested entity was not found. Please connect your Google AI Studio project.");
 
   return withRetry(async () => {
     const ai = new GoogleGenAI({ apiKey: currentApiKey });

@@ -1,0 +1,7 @@
+{
+  "name": "Donna Carmo Alfaiataria Catálogo",
+  "description": "Um catálogo de moda feminina elegante focado em atacado e varejo, com visualização de produtos em alta definição, vídeos de caimento e consultoria de moda via IA.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}
